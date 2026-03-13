@@ -1,0 +1,375 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>P Muralidharan - Biomedical Engineer</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:ital,wght@0,300;0,400;0,500;0,600;0,700;1,300;1,400&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="stylesheet" href="./style.css">
+</head>
+<body>
+
+    <!-- Grain overlay -->
+    <div class="grain"></div>
+
+    <!-- Noise background canvas -->
+    <canvas id="noiseCanvas"></canvas>
+
+    <!-- Theme toggle -->
+    <button class="theme-toggle" id="themeToggle" aria-label="Toggle theme">
+        <span id="toggleLabel">[ DARK ]</span>
+    </button>
+
+    <!-- Navigation -->
+    <nav id="navbar">
+        <div class="nav-inner">
+            <div class="logo">PM_</div>
+            <ul id="nav-menu">
+                <li><a href="#home" class="nav-link active" data-text="HOME">HOME</a></li>
+                <li><a href="#about" class="nav-link" data-text="ABOUT">ABOUT</a></li>
+                <li><a href="#experience" class="nav-link" data-text="EXP">EXPERIENCE</a></li>
+                <li><a href="#projects" class="nav-link" data-text="PROJECTS">PROJECTS</a></li>
+                <li><a href="#skills" class="nav-link" data-text="SKILLS">SKILLS</a></li>
+                <li><a href="#certifications" class="nav-link"data-text="CERTS">CERTIFICATIONS</a></li>
+                <li><a href="#contact" class="nav-link" data-text="CONTACT">CONTACT</a></li>
+            </ul>
+            <button class="mobile-menu-btn" id="mobile-menu-toggle">
+                <span></span><span></span><span></span>
+            </button>
+        </div>
+    </nav>
+
+    <!-- Hero -->
+    <section class="hero" id="home">
+        <div class="hero-index">001</div>
+        <div class="hero-content">
+            <p class="hero-pre">HI I'm</p>
+            <h1 class="hero-title">
+                <span class="glitch" data-text="P MURALIDHARAN">P MURALIDHARAN</span>
+            </h1>
+            <div class="hero-gate">
+                <span class="gate-key">GATE_2025</span>
+                <span class="gate-sep">://</span>
+                <span class="gate-val">AIR_353</span>
+            </div>
+            <p class="hero-desc">BIOMEDICAL ENGINEER | ASPIRING SOFTWARE DEVELOPER</p>
+            <div class="cta-buttons">
+                <a data-text="VIEW_PROJECTS" href="#projects" class="btn btn-primary">VIEW_PROJECTS →</a>
+                <a data-text="GET_IN_TOUCH" href="#contact" class="btn btn-secondary">GET_IN_TOUCH</a>
+            </div>
+        </div>
+        <div class="hero-ticker">
+            <div class="ticker-inner">
+                <span>GATE 2025 QUALIFIER</span><span class="sep"> /// </span>
+                <span>AIR 353</span><span class="sep"> /// </span>
+                <span>BIOMEDICAL ENGINEER</span><span class="sep"> /// </span>
+                <span>IIT MADRAS RESEARCH PARK</span><span class="sep"> /// </span>
+                <span>DEEP LEARNING</span><span class="sep"> /// </span>
+                <span>RF ENGINEERING</span><span class="sep"> /// </span>
+                <span>JAVA</span><span class="sep"> /// </span>
+                <span>PYTHON</span><span class="sep"> /// </span>
+                <span>IOT</span><span class="sep"> /// </span>
+                <span>DISCIPLINE STAR - NPTEL</span><span class="sep"> /// </span>
+                <span>SENSOR INTEGRATION</span><span class="sep"> /// </span>
+                <span>EMBEDDED SYSTEMS</span><span class="sep"> /// </span>
+            </div>
+        </div>
+    </section>
+
+    <!-- About -->
+    <section id="about">
+        <div class="section-head">
+            <span class="section-num">002</span>
+            <h2 data-text="ABOUT_ME">ABOUT_ME</h2>
+        </div>
+        <div class="about-grid">
+            <div class="about-image-block stagger">
+                <div class="about-img-wrap">
+                    <img src="profile.jpeg" alt="P Muralidharan">
+                    <div class="img-label">P_MURALIDHARAN</div>
+                </div>
+                <div class="about-stats">
+                    <div class="stat-row">
+                        <span class="stat-k">GATE_RANK</span>
+                        <span class="stat-v">353</span>
+                    </div>
+                    <div class="stat-row">
+                        <span class="stat-k">NPTEL_CERTS</span>
+                        <span class="stat-v">07</span>
+                    </div>
+                    <div class="stat-row">
+                        <span class="stat-k">INTERNSHIPS</span>
+                        <span class="stat-v">03</span>
+                    </div>
+                </div>
+            </div>
+            <div class="about-text stagger">
+                <p>I’m an Engineering student at Dr. N. G. P. Institute of Technology with a strong interest in how software solves real-world problems. My technical foundation is solid as I secured an All India Rank of 353 in GATE 2025, which reflects my focus on the fundamentals of engineering and problem-solving.</p>
+                <p>While my academic background is in Biomedical Engineering, I’ve spent much of my time pivoting toward software development. I’ve built up a practical command of Java, C, JavaScript, and Python, and I’m also experienced in using MATLAB and LabVIEW. I really enjoy the logic of taking an intricate problem and building a reliable, well-structured software solution that actually works for the user.</p>
+                <p>I’m particularly interested in full-stack development, backend logic, and data analysis. Whether I’m working on a web application or a data processing tool, I enjoy the challenge of building software that is reliable and easy to use. I’m eager to bring this mix of engineering discipline and coding skills to a software-centric role.</p>
+                <a data-text="CONTACT_ME" href="#contact" class="btn btn-primary" style="margin-top:2rem;display:inline-block;">CONTACT_ME →</a>
+            </div>
+        </div>
+    </section>
+
+    <!-- Experience -->
+    <section id="experience">
+        <div class="section-head">
+            <span class="section-num">003</span>
+            <h2 data-text="EXPERIENCE">EXPERIENCE</h2>
+        </div>
+        <div class="exp-list">
+
+            <div class="exp-item stagger">
+                <div class="exp-meta">
+                    <span class="exp-idx">01</span>
+                    <span class="exp-date">July 2025 – July 2026</span>
+                </div>
+                <div class="exp-body">
+                    <h3 data-text="Project Intern">Project Intern</h3>
+                    <h4>International Centre for Clean Water, IIT Madras Research Park, Chennai</h4>
+                    <ul class="exp-desc">
+                        <li>Test, troubleshoot, and calibrate industrial water sensors</li>
+                        <li>Develop embedded C code for microcontroller-based systems</li>
+                        <li>Integrate and optimize electronic hardware for sensor performance</li>
+                    </ul>
+                    <div class="tags">
+                        <span class="tag">Sensors</span>
+                        <span class="tag">Embedded C</span>
+                    </div>
+                </div>
+            </div>
+
+            <div class="exp-item stagger">
+                <div class="exp-meta">
+                    <span class="exp-idx">02</span>
+                    <span class="exp-date">Jul 2024 (15 days)</span>
+                </div>
+                <div class="exp-body">
+                    <h3 data-text="IoT Intern">IoT Intern</h3>
+                    <h4>KrishTec, Coimbatore</h4>
+                    <ul class="exp-desc">
+                        <li>Developed and tested IoT-based systems with focus on sensor integration</li>
+                        <li>Implemented real-time data handling and processing algorithms</li>
+                        <li>Gained practical experience in IoT system architecture and deployment</li>
+                    </ul>
+                    <div class="tags">
+                        <span class="tag">IoT</span>
+                        <span class="tag">Sensor Integration</span>
+                        <span class="tag">Data Processing</span>
+                    </div>
+                </div>
+            </div>
+
+            <div class="exp-item stagger">
+                <div class="exp-meta">
+                    <span class="exp-idx">03</span>
+                    <span class="exp-date">—</span>
+                </div>
+                <div class="exp-body">
+                    <h3 data-text="Hospital Intern">Hospital Intern</h3>
+                    <h4>Multiple Hospitals, Coimbatore</h4>
+                    <ul class="exp-desc">
+                        <li>Completed training at Kumaran Medical Center, Sri Ramakrishna Hospital, and KMCH</li>
+                        <li>Observed clinical device applications in diagnostic departments</li>
+                        <li>Participated in equipment rounds and maintenance procedures</li>
+                        <li>Gained insight into medical equipment management and troubleshooting</li>
+                    </ul>
+                    <div class="tags">
+                        <span class="tag">Medical Devices</span>
+                        <span class="tag">Clinical Applications</span>
+                        <span class="tag">Equipment Management</span>
+                    </div>
+                </div>
+            </div>
+
+        </div>
+    </section>
+
+    <!-- Projects -->
+    <section id="projects">
+        <div class="section-head">
+            <span class="section-num">004</span>
+            <h2 data-text="FEATURED_PROJECTS">PROJECTS</h2>
+        </div>
+        <div class="projects-grid">
+
+            <div class="project-card stagger">
+                <div class="project-img">
+                    <img src="image6.png" alt="Wearable slot antenna for glucose monitoring">
+                    <div class="project-img-overlay"></div>
+                </div>
+                <div class="project-body">
+                    <span class="project-num">PROJECT_01</span>
+                    <h3 data-text="Wearable Slot Antenna for Glucose Monitoring">Wearable Slot Antenna for Glucose Monitoring</h3>
+                    <p>Designed and simulated a wearable antenna using Ansys HFSS for non-invasive glucose level detection through tear fluid analysis.</p>
+                    <div class="tags">
+                        <span class="tag">Ansys HFSS</span>
+                        <span class="tag">RF Engineering</span>
+                        <span class="tag">Biomedical Sensors</span>
+                    </div>
+                </div>
+            </div>
+
+            <div class="project-card stagger">
+                <div class="project-img">
+                    <img src="image7.png" alt="AI-Driven Ophthalmic Disease Detection">
+                    <div class="project-img-overlay"></div>
+                </div>
+                <div class="project-body">
+                    <span class="project-num">PROJECT_02</span>
+                    <h3 data-text="AI-Driven Ophthalmic Disease Detection">AI-Driven Ophthalmic Disease Detection</h3>
+                    <p>Developed and coordinated testing of a deep learning framework for automated detection of Glaucoma and Retinal Vein Occlusion using retinal images.</p>
+                    <div class="tags">
+                        <span class="tag">Python</span>
+                        <span class="tag">Deep Learning</span>
+                        <span class="tag">Google Colab</span>
+                        <span class="tag">Computer Vision</span>
+                    </div>
+                </div>
+            </div>
+
+        </div>
+    </section>
+
+    <!-- Skills -->
+    <section id="skills">
+        <div class="section-head">
+            <span class="section-num">005</span>
+            <h2 data-text="SKILLS_&_EXPERTISE">SKILLS_&amp;_EXPERTISE</h2>
+        </div>
+        <div class="skills-grid">
+
+            <div class="skill-block stagger">
+                <div class="skill-block-head">
+                    <span class="skill-idx">01</span>
+                    <h3 data-text="TECHNICAL_SKILLS">TECHNICAL_SKILLS</h3>
+                </div>
+                <ul class="skill-list">
+                    <li><span class="arrow">→</span> MATLAB &amp; LabVIEW Programming</li>
+                    <li><span class="arrow">→</span> Python for Data Analysis</li>
+                    <li><span class="arrow">→</span> Ansys HFSS for RF Design</li>
+                    <li><span class="arrow">→</span> IoT &amp; Sensor Integration</li>
+                    <li><span class="arrow">→</span> Embedded Systems</li>
+                </ul>
+            </div>
+
+            <div class="skill-block stagger">
+                <div class="skill-block-head">
+                    <span class="skill-idx">02</span>
+                    <h3 data-text="PROGRAMMING">PROGRAMMING</h3>
+                </div>
+                <ul class="skill-list">
+                    <li><span class="arrow">→</span> Java, JavaScript</li>
+                    <li><span class="arrow">→</span> Python, C, C++</li>
+                    <li><span class="arrow">→</span> MATLAB Scripting</li>
+                    <li><span class="arrow">→</span> LabVIEW Programming</li>
+                </ul>
+            </div>
+
+            <div class="skill-block stagger">
+                <div class="skill-block-head">
+                    <span class="skill-idx">03</span>
+                    <h3 data-text="SOFT_SKILLS">SOFT_SKILLS</h3>
+                </div>
+                <ul class="skill-list">
+                    <li><span class="arrow">→</span> Analytical &amp; Critical Thinking</li>
+                    <li><span class="arrow">→</span> Effective Communication</li>
+                    <li><span class="arrow">→</span> Time Management</li>
+                    <li><span class="arrow">→</span> Problem Solving</li>
+                    <li><span class="arrow">→</span> Team Collaboration</li>
+                </ul>
+            </div>
+
+        </div>
+    </section>
+
+    <!-- Certifications -->
+    <section id="certifications">
+        <div class="section-head">
+            <span class="section-num">006</span>
+            <h2 data-text="CERTIFICATIONS">CERTIFICATIONS</h2>
+        </div>
+        <div class="cert-list">
+
+            <div class="cert-item stagger">
+                <div class="cert-meta">
+                    <span class="cert-idx">01</span>
+                </div>
+                <div class="cert-body">
+                    <h3 data-text="NPTEL CERTIFICATION">NPTEL CERTIFICATION</h3>
+                    <h4>Elite, Elite+Silver &amp; Elite+Gold Level · Discipline Star in CSE Domain</h4>
+                    <p>Earned multiple NPTEL certifications including Programming in Java (Elite+Gold with Topper (Top 1%)), Cloud Computing (Elite+Silver with Topper (Top 5%)), Biophotonics (Elite+Silver), Transducers for Instrumentation (Elite), Problem Solving through Programming in C (Elite), Programming in Modern C++, and Deep Learning.</p>
+                </div>
+            </div>
+
+            <div class="cert-item stagger">
+                <div class="cert-meta">
+                    <span class="cert-idx">02</span>
+                </div>
+                <div class="cert-body">
+                    <h3 data-text="TECHNICAL TRAINING">TECHNICAL TRAINING</h3>
+                    <h4>MATLAB, LabVIEW &amp; Biomedical Equipment</h4>
+                    <p>Completed specialized training in MATLAB and LabVIEW programming, signal acquisition modules, automation workflows, and advanced techniques in biomedical equipment design and innovation.</p>
+                </div>
+            </div>
+
+            <div class="cert-item stagger">
+                <div class="cert-meta">
+                    <span class="cert-idx">03</span>
+                </div>
+                <div class="cert-body">
+                    <h3 data-text="WORKSHOPS &amp; SEMINARS">WORKSHOPS &amp; SEMINARS</h3>
+                    <h4>Technical Skill Development</h4>
+                    <p>Participated in workshops on Data Science, Ultrasound Machine Applications, and attended national level seminars on biomedical innovations and cognitive rehabilitation technologies.</p>
+                </div>
+            </div>
+
+        </div>
+    </section>
+
+    <!-- Contact -->
+    <section id="contact">
+        <div class="section-head">
+            <span class="section-num">007</span>
+            <h2 data-text="GET_IN_TOUCH">GET_IN_TOUCH</h2>
+        </div>
+        <div class="contact-wrap">
+            <p class="contact-sub">I'm always open to discussing new projects, research opportunities, or collaborations.</p>
+            <div class="contact-grid">
+                <a href="mailto:muralidharan242005@gmail.com" class="contact-item stagger" target="_blank">
+                    <span class="contact-key">EMAIL://</span>
+                    <span class="contact-val" data-text="muralidharan242005@gmail.com">muralidharan242005@gmail.com</span>
+                </a>
+                <a href="tel:9150750340" class="contact-item stagger">
+                    <span class="contact-key">PHONE://</span>
+                    <span class="contact-val" data-text="+91 9150750340">+91 9150750340</span>
+                </a>
+                <a href="https://www.linkedin.com/in/muralidharan-p-034889250" target="_blank" class="contact-item stagger">
+                    <span class="contact-key">LINKEDIN://</span>
+                    <span class="contact-val" data-text="muralidharan-p-034889250">Muralidharan P</span>
+                </a>
+                <a href="https://github.com/Murali-dharan-24" target="_blank" class="contact-item stagger">
+                    <span class="contact-key">GITHUB://</span>
+                    <span class="contact-val" data-text="Murali-dharan-24">Murali-dharan-24</span>
+                </a>
+            </div>
+        </div>
+    </section>
+
+    <footer>
+        <div class="footer-inner">
+            <span class="footer-logo">PM_</span>
+            <span class="footer-copy">© 2025 P MURALIDHARAN. ALL RIGHTS RESERVED.</span>
+            <a href="#home" class="footer-top">↑ TOP</a>
+        </div>
+    </footer>
+
+    <button id="backToTop" class="back-to-top" aria-label="Back to top">↑</button>
+
+    <script src="./script.js"></script>
+</body>
+</html>
