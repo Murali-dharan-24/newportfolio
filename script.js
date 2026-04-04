@@ -92,62 +92,205 @@ function updateActiveNav() {
     links.forEach(l => l.classList.toggle('active', l.getAttribute('href') === '#' + current));
 }
 
-// ── Section Wipe + Stagger Reveal ────────────
-const sections = document.querySelectorAll('section:not(.hero)');
+// ── DATA CORRUPTION TRANSITION ───────────────
+const CHARS = '!@#$%^&*()_+-=[]{}|;,.<>?/\\~`ABCDEFabcdef0123456789░▒▓█▄▀■□▪';
+const COL_W = 10;
+const ROW_H = 14;
 
-// Inject wipe overlay into each section
-sections.forEach(sec => {
-    const overlay = document.createElement('div');
-    overlay.classList.add('wipe-overlay');
-    sec.insertBefore(overlay, sec.firstChild);
-});
+function getThemeColors() {
+    const dark = html.getAttribute('data-theme') === 'dark';
+    return {
+        ink: dark ? '#e8edf5' : '#0d1b3e',
+        bg:  dark ? '#080d1c' : '#f0f2f5',
+    };
+}
 
-// Stagger delays
+function createCorruptionCanvas(section) {
+    const existing = section.querySelector('.corruption-canvas');
+    if (existing) existing.remove();
+
+    const canvas = document.createElement('canvas');
+    canvas.classList.add('corruption-canvas');
+    section.appendChild(canvas);
+    return canvas;
+}
+
+function runCorruption(section, onDone) {
+    const canvas = createCorruptionCanvas(section);
+    const W = section.offsetWidth;
+    const H = section.offsetHeight;
+    canvas.width  = W;
+    canvas.height = H;
+    const ctx = canvas.getContext('2d');
+    const cols = Math.floor(W / COL_W);
+    const rows = Math.floor(H / ROW_H);
+    const { ink, bg } = getThemeColors();
+
+    // Each column has a state: 'corrupt' → 'resolving' → 'done'
+    const colState  = Array(cols).fill('corrupt');
+    const colOffset = Array.from({length: cols}, (_, i) => i);
+
+    // Stagger: columns resolve left→right with slight randomness
+    colOffset.forEach((_, i) => {
+        const delay = (i / cols) * 700 + Math.random() * 120;
+        setTimeout(() => {
+            colState[i] = 'resolving';
+            setTimeout(() => { colState[i] = 'done'; }, 180);
+        }, delay);
+    });
+
+    let animId;
+    const totalDuration = 1000; // 1s medium
+    const start = performance.now();
+
+    function drawFrame(now) {
+        const elapsed = now - start;
+        ctx.clearRect(0, 0, W, H);
+
+        let allDone = true;
+
+        for (let c = 0; c < cols; c++) {
+            const state = colState[c];
+            if (state === 'done') continue;
+
+            allDone = false;
+
+            for (let r = 0; r < rows; r++) {
+                const ch = CHARS[Math.floor(Math.random() * CHARS.length)];
+
+                if (state === 'corrupt') {
+                    // Full corruption — dense, bright
+                    const alpha = 0.55 + Math.random() * 0.45;
+                    ctx.fillStyle = ink.replace(')', `,${alpha})`).replace('rgb', 'rgba');
+                    // Fallback for hex colors
+                    ctx.globalAlpha = alpha;
+                    ctx.fillStyle = ink;
+                    ctx.font = `${Math.random() > 0.85 ? 'bold ' : ''}11px IBM Plex Mono, monospace`;
+                    ctx.fillText(ch, c * COL_W, r * ROW_H + 11);
+                    ctx.globalAlpha = 1;
+
+                } else if (state === 'resolving') {
+                    // Fading out — sparse and dim
+                    ctx.globalAlpha = 0.2 + Math.random() * 0.3;
+                    ctx.fillStyle = ink;
+                    ctx.font = '11px IBM Plex Mono, monospace';
+                    if (Math.random() > 0.5) {
+                        ctx.fillText(ch, c * COL_W, r * ROW_H + 11);
+                    }
+                    ctx.globalAlpha = 1;
+                }
+            }
+        }
+
+        if (!allDone) {
+            animId = requestAnimationFrame(drawFrame);
+        } else {
+            ctx.clearRect(0, 0, W, H);
+            canvas.remove();
+            if (onDone) onDone();
+        }
+    }
+
+    animId = requestAnimationFrame(drawFrame);
+    return () => { cancelAnimationFrame(animId); canvas.remove(); };
+}
+
+function runScramble(section) {
+    const canvas = createCorruptionCanvas(section);
+    const W = section.offsetWidth;
+    const H = section.offsetHeight;
+    canvas.width  = W;
+    canvas.height = H;
+    const ctx = canvas.getContext('2d');
+    const cols = Math.floor(W / COL_W);
+    const rows = Math.floor(H / ROW_H);
+    const { ink } = getThemeColors();
+
+    const colState = Array(cols).fill('empty');
+
+    // Columns scramble in right→left quickly
+    colState.forEach((_, i) => {
+        const delay = ((cols - i) / cols) * 300 + Math.random() * 80;
+        setTimeout(() => { colState[i] = 'corrupt'; }, delay);
+    });
+
+    let animId;
+    const start = performance.now();
+
+    function drawFrame() {
+        ctx.clearRect(0, 0, W, H);
+        for (let c = 0; c < cols; c++) {
+            if (colState[c] !== 'corrupt') continue;
+            for (let r = 0; r < rows; r++) {
+                const ch = CHARS[Math.floor(Math.random() * CHARS.length)];
+                ctx.globalAlpha = 0.45 + Math.random() * 0.55;
+                ctx.fillStyle = ink;
+                ctx.font = '11px IBM Plex Mono, monospace';
+                ctx.fillText(ch, c * COL_W, r * ROW_H + 11);
+                ctx.globalAlpha = 1;
+            }
+        }
+        animId = requestAnimationFrame(drawFrame);
+    }
+
+    animId = requestAnimationFrame(drawFrame);
+    // Run scramble for 400ms then stop (leaves canvas in place until next enter)
+    setTimeout(() => {
+        cancelAnimationFrame(animId);
+    }, 400);
+}
+
+// ── Stagger observer (fires after corruption clears) ──
+const staggerObs = new IntersectionObserver(entries => {
+    entries.forEach(e => {
+        if (e.isIntersecting) {
+            e.target.classList.add('visible');
+        } else {
+            // Reset stagger so it re-animates next time
+            e.target.classList.remove('visible');
+        }
+    });
+}, { threshold: 0.1 });
+
+// Set stagger delays
 document.querySelectorAll('.exp-list,.projects-grid,.skills-grid,.cert-list,.contact-grid,.about-grid')
     .forEach(c => c.querySelectorAll('.stagger').forEach((el, i) => {
         el.style.transitionDelay = `${i * 0.08}s`;
     }));
 
-// Wipe observer
-const wipeObs = new IntersectionObserver(entries => {
+// ── Main section observer ──
+const sectionMap = new WeakMap(); // tracks cancel fn per section
+
+const sectionObs = new IntersectionObserver(entries => {
     entries.forEach(e => {
         const sec = e.target;
-        const overlay = sec.querySelector('.wipe-overlay');
-        if (!overlay) return;
 
-        if (e.isIntersecting && !sec.classList.contains('wipe-revealed')) {
-            // Phase 1 — wipe sweeps IN (covers section)
-            overlay.classList.remove('wipe-out');
-            overlay.classList.add('wipe-in');
-
-            // Phase 2 — wipe retracts, revealing content
-            setTimeout(() => {
-                sec.classList.add('wipe-revealed');
-                overlay.classList.remove('wipe-in');
-                overlay.classList.add('wipe-out');
-
-                // Trigger stagger on visible children
-                sec.querySelectorAll('.stagger').forEach(el => {
-                    staggerObs.observe(el);
-                });
-            }, 450);
-
-            wipeObs.unobserve(sec);
+        // Cancel any running animation on this section
+        if (sectionMap.has(sec)) {
+            sectionMap.get(sec)();
+            sectionMap.delete(sec);
         }
-    });
-}, { threshold: 0.15 });
 
-sections.forEach(sec => wipeObs.observe(sec));
-
-// Stagger observer (fires after wipe reveals section)
-const staggerObs = new IntersectionObserver(entries => {
-    entries.forEach(e => {
         if (e.isIntersecting) {
-            e.target.classList.add('visible');
-            staggerObs.unobserve(e.target);
+            // Entering viewport — resolve corruption, then trigger staggers
+            const cancel = runCorruption(sec, () => {
+                sec.querySelectorAll('.stagger').forEach(el => staggerObs.observe(el));
+            });
+            sectionMap.set(sec, cancel);
+        } else {
+            // Leaving viewport — scramble back, reset staggers
+            sec.querySelectorAll('.stagger').forEach(el => {
+                el.classList.remove('visible');
+                staggerObs.unobserve(el);
+            });
+            runScramble(sec);
         }
     });
-}, { threshold: 0.1 });
+}, { threshold: 0.12 });
+
+document.querySelectorAll('section:not(.hero)').forEach(sec => {
+    sectionObs.observe(sec);
+});
 
 // ── Glitch fire on load ───────────────────────
 window.addEventListener('load', () => {
