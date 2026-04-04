@@ -92,17 +92,62 @@ function updateActiveNav() {
     links.forEach(l => l.classList.toggle('active', l.getAttribute('href') === '#' + current));
 }
 
-// ── Stagger Scroll Reveal ─────────────────────
-const obs = new IntersectionObserver(entries => {
-    entries.forEach(e => { if (e.isIntersecting) e.target.classList.add('visible'); });
-}, { threshold: 0.1 });
+// ── Section Wipe + Stagger Reveal ────────────
+const sections = document.querySelectorAll('section:not(.hero)');
 
+// Inject wipe overlay into each section
+sections.forEach(sec => {
+    const overlay = document.createElement('div');
+    overlay.classList.add('wipe-overlay');
+    sec.insertBefore(overlay, sec.firstChild);
+});
+
+// Stagger delays
 document.querySelectorAll('.exp-list,.projects-grid,.skills-grid,.cert-list,.contact-grid,.about-grid')
     .forEach(c => c.querySelectorAll('.stagger').forEach((el, i) => {
         el.style.transitionDelay = `${i * 0.08}s`;
     }));
 
-document.querySelectorAll('.stagger').forEach(el => obs.observe(el));
+// Wipe observer
+const wipeObs = new IntersectionObserver(entries => {
+    entries.forEach(e => {
+        const sec = e.target;
+        const overlay = sec.querySelector('.wipe-overlay');
+        if (!overlay) return;
+
+        if (e.isIntersecting && !sec.classList.contains('wipe-revealed')) {
+            // Phase 1 — wipe sweeps IN (covers section)
+            overlay.classList.remove('wipe-out');
+            overlay.classList.add('wipe-in');
+
+            // Phase 2 — wipe retracts, revealing content
+            setTimeout(() => {
+                sec.classList.add('wipe-revealed');
+                overlay.classList.remove('wipe-in');
+                overlay.classList.add('wipe-out');
+
+                // Trigger stagger on visible children
+                sec.querySelectorAll('.stagger').forEach(el => {
+                    staggerObs.observe(el);
+                });
+            }, 450);
+
+            wipeObs.unobserve(sec);
+        }
+    });
+}, { threshold: 0.15 });
+
+sections.forEach(sec => wipeObs.observe(sec));
+
+// Stagger observer (fires after wipe reveals section)
+const staggerObs = new IntersectionObserver(entries => {
+    entries.forEach(e => {
+        if (e.isIntersecting) {
+            e.target.classList.add('visible');
+            staggerObs.unobserve(e.target);
+        }
+    });
+}, { threshold: 0.1 });
 
 // ── Glitch fire on load ───────────────────────
 window.addEventListener('load', () => {
