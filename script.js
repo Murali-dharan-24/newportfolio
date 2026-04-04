@@ -92,185 +92,17 @@ function updateActiveNav() {
     links.forEach(l => l.classList.toggle('active', l.getAttribute('href') === '#' + current));
 }
 
-// ── DATA CORRUPTION TRANSITION ───────────────
-const CHARS = '!@#$%^&*()_+-=[]{}|;,.<>?/\\~`ABCDEFabcdef0123456789░▒▓█▄▀■□▪';
-const COL_W = 10;
-const ROW_H = 14;
-
-function getThemeColors() {
-    const dark = html.getAttribute('data-theme') === 'dark';
-    return {
-        ink: dark ? '#e8edf5' : '#0d1b3e',
-        bg:  dark ? '#080d1c' : '#f0f2f5',
-    };
-}
-
-function createCorruptionCanvas(section) {
-    const existing = section.querySelector('.corruption-canvas');
-    if (existing) existing.remove();
-    const c = document.createElement('canvas');
-    c.classList.add('corruption-canvas');
-    section.appendChild(c);
-    return c;
-}
-
-function runCorruption(section, onDone) {
-    const cv  = createCorruptionCanvas(section);
-    const W   = section.offsetWidth;
-    const H   = section.offsetHeight;
-    cv.width  = W;
-    cv.height = H;
-    const cx   = cv.getContext('2d');
-    const cols = Math.floor(W / COL_W);
-    const rows = Math.floor(H / ROW_H);
-    const { ink } = getThemeColors();
-
-    const colState = Array(cols).fill('corrupt');
-
-    colState.forEach((_, i) => {
-        const delay = (i / cols) * 700 + Math.random() * 120;
-        setTimeout(() => {
-            colState[i] = 'resolving';
-            setTimeout(() => { colState[i] = 'done'; }, 180);
-        }, delay);
-    });
-
-    let animId;
-
-    function drawFrame() {
-        cx.clearRect(0, 0, W, H);
-        let allDone = true;
-
-        for (let c = 0; c < cols; c++) {
-            const state = colState[c];
-            if (state === 'done') continue;
-            allDone = false;
-
-            for (let r = 0; r < rows; r++) {
-                const ch = CHARS[Math.floor(Math.random() * CHARS.length)];
-                if (state === 'corrupt') {
-                    cx.globalAlpha = 0.55 + Math.random() * 0.45;
-                    cx.fillStyle   = ink;
-                    cx.font        = `${Math.random() > 0.85 ? 'bold ' : ''}11px IBM Plex Mono, monospace`;
-                    cx.fillText(ch, c * COL_W, r * ROW_H + 11);
-                    cx.globalAlpha = 1;
-                } else if (state === 'resolving') {
-                    cx.globalAlpha = 0.2 + Math.random() * 0.3;
-                    cx.fillStyle   = ink;
-                    cx.font        = '11px IBM Plex Mono, monospace';
-                    if (Math.random() > 0.5) cx.fillText(ch, c * COL_W, r * ROW_H + 11);
-                    cx.globalAlpha = 1;
-                }
-            }
-        }
-
-        if (!allDone) {
-            animId = requestAnimationFrame(drawFrame);
-        } else {
-            cx.clearRect(0, 0, W, H);
-            cv.remove();
-            if (onDone) onDone();
-        }
-    }
-
-    animId = requestAnimationFrame(drawFrame);
-    return () => { cancelAnimationFrame(animId); cv.remove(); };
-}
-
-function runScramble(section) {
-    const cv  = createCorruptionCanvas(section);
-    const W   = section.offsetWidth;
-    const H   = section.offsetHeight;
-    cv.width  = W;
-    cv.height = H;
-    const cx   = cv.getContext('2d');
-    const cols = Math.floor(W / COL_W);
-    const rows = Math.floor(H / ROW_H);
-    const { ink } = getThemeColors();
-
-    const colState = Array(cols).fill('empty');
-
-    colState.forEach((_, i) => {
-        const delay = ((cols - i) / cols) * 300 + Math.random() * 80;
-        setTimeout(() => { colState[i] = 'corrupt'; }, delay);
-    });
-
-    let animId;
-
-    function drawFrame() {
-        cx.clearRect(0, 0, W, H);
-        for (let c = 0; c < cols; c++) {
-            if (colState[c] !== 'corrupt') continue;
-            for (let r = 0; r < rows; r++) {
-                const ch = CHARS[Math.floor(Math.random() * CHARS.length)];
-                cx.globalAlpha = 0.45 + Math.random() * 0.55;
-                cx.fillStyle   = ink;
-                cx.font        = '11px IBM Plex Mono, monospace';
-                cx.fillText(ch, c * COL_W, r * ROW_H + 11);
-                cx.globalAlpha = 1;
-            }
-        }
-        animId = requestAnimationFrame(drawFrame);
-    }
-
-    animId = requestAnimationFrame(drawFrame);
-
-    setTimeout(() => {
-        cancelAnimationFrame(animId);
-        cx.clearRect(0, 0, W, H);
-        cv.remove();
-    }, 400);
-}
-
-// ── Stagger observer ──────────────────────────
-const staggerObs = new IntersectionObserver(entries => {
-    entries.forEach(e => {
-        if (e.isIntersecting) {
-            e.target.classList.add('visible');
-            staggerObs.unobserve(e.target);
-        }
-    });
+// ── Stagger Scroll Reveal ─────────────────────
+const obs = new IntersectionObserver(entries => {
+    entries.forEach(e => { if (e.isIntersecting) e.target.classList.add('visible'); });
 }, { threshold: 0.1 });
 
-// Store delays on dataset so resets preserve them
 document.querySelectorAll('.exp-list,.projects-grid,.skills-grid,.cert-list,.contact-grid,.about-grid')
     .forEach(c => c.querySelectorAll('.stagger').forEach((el, i) => {
-        const delay = `${i * 0.08}s`;
-        el.style.transitionDelay = delay;
-        el.dataset.delay = delay;
+        el.style.transitionDelay = `${i * 0.08}s`;
     }));
 
-// ── Main section observer ─────────────────────
-const sectionMap = new WeakMap();
-
-const sectionObs = new IntersectionObserver(entries => {
-    entries.forEach(e => {
-        const sec = e.target;
-
-        if (sectionMap.has(sec)) {
-            sectionMap.get(sec)();
-            sectionMap.delete(sec);
-        }
-
-        if (e.isIntersecting) {
-            const cancel = runCorruption(sec, () => {
-                sec.querySelectorAll('.stagger').forEach(el => staggerObs.observe(el));
-            });
-            sectionMap.set(sec, cancel);
-        } else {
-            sec.querySelectorAll('.stagger').forEach(el => {
-                el.classList.remove('visible');
-                el.style.transitionDelay = el.dataset.delay || '0s';
-                staggerObs.unobserve(el);
-            });
-            runScramble(sec);
-        }
-    });
-}, { threshold: 0, rootMargin: '0px 0px -80px 0px' });
-
-document.querySelectorAll('section:not(.hero)').forEach(sec => {
-    sectionObs.observe(sec);
-});
+document.querySelectorAll('.stagger').forEach(el => obs.observe(el));
 
 // ── Glitch fire on load ───────────────────────
 window.addEventListener('load', () => {
@@ -306,6 +138,7 @@ function runTVShutdown(targetId) {
     const ink = html.getAttribute('data-theme') === 'dark' ? INK_D : INK_L;
     const bg  = html.getAttribute('data-theme') === 'dark' ? '#080d1c' : '#f0f2f5';
 
+    // ── Main screen (collapses vertically) ──
     const screen = document.createElement('div');
     screen.style.cssText = `
         position:absolute;inset:0;
@@ -316,6 +149,7 @@ function runTVShutdown(targetId) {
     `;
     OV.appendChild(screen);
 
+    // ── Scanlines ──
     const scan = document.createElement('div');
     scan.style.cssText = `
         position:absolute;inset:0;
@@ -328,6 +162,7 @@ function runTVShutdown(targetId) {
     `;
     OV.appendChild(scan);
 
+    // ── CRT collapse line ──
     const line = document.createElement('div');
     line.style.cssText = `
         position:absolute;
@@ -339,6 +174,7 @@ function runTVShutdown(targetId) {
     `;
     OV.appendChild(line);
 
+    // ── RGB fringe ──
     const lineBlue = document.createElement('div');
     lineBlue.style.cssText = `
         position:absolute;left:0;width:100%;height:1px;
@@ -353,15 +189,16 @@ function runTVShutdown(targetId) {
     `;
     OV.appendChild(lineRed);
 
-    const noiseEl = document.createElement('canvas');
-    noiseEl.width = 300; noiseEl.height = 200;
-    noiseEl.style.cssText = `
+    // ── Static noise canvas ──
+    const noise = document.createElement('canvas');
+    noise.width = 300; noise.height = 200;
+    noise.style.cssText = `
         position:absolute;inset:0;
         width:100%;height:100%;
         opacity:0;image-rendering:pixelated;
     `;
-    OV.appendChild(noiseEl);
-    const nctx = noiseEl.getContext('2d');
+    OV.appendChild(noise);
+    const nctx = noise.getContext('2d');
 
     function drawStatic(alpha) {
         const id = nctx.createImageData(300, 200);
@@ -372,17 +209,20 @@ function runTVShutdown(targetId) {
             d[i+3] = Math.random() * 180;
         }
         nctx.putImageData(id, 0, 0);
-        noiseEl.style.opacity = String(alpha);
+        noise.style.opacity = String(alpha);
     }
 
+    // ── PHASE 1: Static flicker ──
     let staticInterval = setInterval(() => drawStatic(0.25), 80);
 
+    // ── PHASE 2: Screen collapses (80ms) ──
     setTimeout(() => {
         screen.style.transition = 'transform 0.18s steps(6)';
         screen.style.transform  = 'scaleY(0.08)';
         drawStatic(0.5);
     }, 80);
 
+    // ── PHASE 3: Snap to line (240ms) ──
     setTimeout(() => {
         clearInterval(staticInterval);
         screen.style.transition = 'none';
@@ -391,9 +231,10 @@ function runTVShutdown(targetId) {
         line.style.opacity      = '1';
         lineBlue.style.opacity  = '0.7';
         lineRed.style.opacity   = '0.7';
-        noiseEl.style.opacity   = '0';
+        noise.style.opacity     = '0';
     }, 240);
 
+    // ── PHASE 4: Line flickers then dies ──
     setTimeout(() => { line.style.opacity = '0.3'; lineBlue.style.opacity = '0.3'; lineRed.style.opacity = '0.3'; }, 300);
     setTimeout(() => { line.style.opacity = '0.8'; lineBlue.style.opacity = '0.6'; lineRed.style.opacity = '0.6'; }, 340);
     setTimeout(() => { line.style.opacity = '0.1'; }, 380);
@@ -407,11 +248,13 @@ function runTVShutdown(targetId) {
         lineRed.style.opacity  = '0';
     }, 450);
 
+    // ── PHASE 5: Scroll while dark (470ms) ──
     setTimeout(() => {
         const target = document.querySelector(targetId);
         if (target) target.scrollIntoView({ behavior: 'instant' });
     }, 470);
 
+    // ── CLEAN UP (560ms) ──
     setTimeout(() => {
         OV.style.display = 'none';
         OV.innerHTML = '';
