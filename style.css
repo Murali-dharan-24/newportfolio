@@ -49,7 +49,7 @@ body {
     transition: background 0.3s, color 0.3s;
 }
 
-/* ── GRAIN (top layer, decorative) ───────────── */
+/* ── GRAIN ───────────────────────────────────── */
 .grain {
     position: fixed;
     inset: 0;
@@ -62,7 +62,7 @@ body {
 
 [data-theme="dark"] .grain { opacity: 0.045; }
 
-/* ── NOISE CANVAS (background animation) ─────── */
+/* ── NOISE CANVAS ────────────────────────────── */
 #noiseCanvas {
     position: fixed;
     inset: 0;
@@ -412,6 +412,8 @@ nav a:hover, nav a.active {
 
 /* ── SECTIONS ────────────────────────────────── */
 section:not(.hero) {
+    position: relative;
+    overflow: visible;
     max-width: 1300px;
     margin: 0 auto;
     padding: 5rem 2rem;
@@ -542,7 +544,6 @@ h2 {
 }
 
 .exp-item:last-child { border-bottom: none; }
-
 .exp-item:hover { background: var(--bg-2); }
 
 .exp-meta {
@@ -569,9 +570,7 @@ h2 {
     line-height: 1.5;
 }
 
-.exp-body {
-    padding: 2rem;
-}
+.exp-body { padding: 2rem; }
 
 .exp-body h3 {
     font-size: 1.1rem;
@@ -785,9 +784,7 @@ h2 {
     transition: transform 0.2s;
 }
 
-.skill-list li:hover .arrow {
-    transform: translateX(3px);
-}
+.skill-list li:hover .arrow { transform: translateX(3px); }
 
 /* ── CERTIFICATIONS ──────────────────────────── */
 .cert-list {
@@ -870,14 +867,13 @@ h2 {
     border-right: var(--border);
     border-bottom: var(--border);
     transition: background 0.15s;
+    position: relative;
+    isolation: isolate;
 }
 
 .contact-item:nth-child(even) { border-right: none; }
 .contact-item:nth-last-child(-n+2) { border-bottom: none; }
-
-.contact-item:hover {
-    background: var(--ink);
-}
+.contact-item:hover { background: var(--ink); }
 
 .contact-key {
     font-size: 0.65rem;
@@ -893,12 +889,12 @@ h2 {
     color: var(--ink);
     transition: color 0.15s;
     word-break: break-all;
+    position: relative;
+    display: inline-block;
 }
 
 .contact-item:hover .contact-key,
-.contact-item:hover .contact-val {
-    color: var(--bg);
-}
+.contact-item:hover .contact-val { color: var(--bg); }
 
 /* ── FOOTER ──────────────────────────────────── */
 footer {
@@ -969,21 +965,14 @@ footer {
     justify-content: center;
 }
 
-.back-to-top.visible {
-    opacity: 1;
-    visibility: visible;
-}
+.back-to-top.visible { opacity: 1; visibility: visible; }
 
 .back-to-top:hover {
     transform: translate(-3px, -3px);
     box-shadow: var(--shadow);
 }
 
-/* ── HOVER: ANIMATED BORDER CRAWL ───────────────
-   Uses a pseudo overlay with clip-path drawing
-   all 4 sides in sequence on hover
-   ─────────────────────────────────────────────── */
-
+/* ── BORDER CRAWL ────────────────────────────── */
 .exp-item,
 .project-card,
 .skill-block,
@@ -992,59 +981,6 @@ footer {
     isolation: isolate;
 }
 
-/* The crawling border overlay */
-.exp-item::after,
-.project-card::after,
-.skill-block::after,
-.cert-item::after {
-    content: '';
-    position: absolute;
-    inset: -3px;
-    pointer-events: none;
-    z-index: 2;
-
-    /* Draw the border using a gradient outline trick:
-       4 separate box-shadow insets at 0 opacity → animate to ink color */
-    outline: 3px solid transparent;
-    outline-offset: 0;
-
-    /* Use background-image border trick via linear gradients on each side */
-    background:
-        linear-gradient(var(--ink), var(--ink)) top    / 0%   3px no-repeat,
-        linear-gradient(var(--ink), var(--ink)) right  / 3px  0%  no-repeat,
-        linear-gradient(var(--ink), var(--ink)) bottom / 0%   3px no-repeat,
-        linear-gradient(var(--ink), var(--ink)) left   / 3px  0%  no-repeat;
-    transition:
-        background-size 0s;
-}
-
-.exp-item:hover::after,
-.project-card:hover::after,
-.skill-block:hover::after,
-.cert-item:hover::after {
-    background:
-        linear-gradient(var(--ink), var(--ink)) top    / 100% 3px no-repeat,
-        linear-gradient(var(--ink), var(--ink)) right  / 3px  100% no-repeat,
-        linear-gradient(var(--ink), var(--ink)) bottom / 100% 3px no-repeat,
-        linear-gradient(var(--ink), var(--ink)) left   / 3px  100% no-repeat;
-    transition:
-        background-size 0.2s ease 0s,       /* top */
-        background-size 0.2s ease 0.2s,     /* right */
-        background-size 0.2s ease 0.4s,     /* bottom */
-        background-size 0.2s ease 0.6s;     /* left */
-}
-
-/* Each side needs its own transition — use custom props trick */
-.exp-item::after,
-.project-card::after,
-.skill-block::after,
-.cert-item::after {
-    --t: 0.2s;
-    /* Override transition per-side using animation instead */
-    animation: none;
-}
-
-/* Cleaner approach: animate with keyframes per side using clip-path */
 .exp-item::after,
 .project-card::after,
 .skill-block::after,
@@ -1054,15 +990,11 @@ footer {
     inset: 0;
     pointer-events: none;
     z-index: 2;
-    background: none;
-
-    /* 4-side border via box-shadow spread — animated via opacity */
     box-shadow:
-        inset  0  3px 0 0 transparent,   /* top */
-        inset -3px  0  0 0 transparent,  /* right */
-        inset  0 -3px 0 0 transparent,   /* bottom */
-        inset  3px  0  0 0 transparent;  /* left */
-    transition: none;
+        inset  0  3px 0 0 transparent,
+        inset -3px  0  0 0 transparent,
+        inset  0 -3px 0 0 transparent,
+        inset  3px  0  0 0 transparent;
 }
 
 .exp-item:hover::after,
@@ -1072,45 +1004,6 @@ footer {
     animation: borderCrawl 0.7s ease forwards;
 }
 
-@keyframes borderCrawl {
-    0%   {
-        box-shadow:
-            inset  0  3px 0 0 transparent,
-            inset -3px  0  0 0 transparent,
-            inset  0 -3px 0 0 transparent,
-            inset  3px  0  0 0 transparent;
-    }
-    25%  {
-        box-shadow:
-            inset  0  3px 0 0 var(--ink),
-            inset -3px  0  0 0 transparent,
-            inset  0 -3px 0 0 transparent,
-            inset  3px  0  0 0 transparent;
-    }
-    50%  {
-        box-shadow:
-            inset  0  3px 0 0 var(--ink),
-            inset -3px  0  0 0 var(--ink),
-            inset  0 -3px 0 0 transparent,
-            inset  3px  0  0 0 transparent;
-    }
-    75%  {
-        box-shadow:
-            inset  0  3px 0 0 var(--ink),
-            inset -3px  0  0 0 var(--ink),
-            inset  0 -3px 0 0 var(--ink),
-            inset  3px  0  0 0 transparent;
-    }
-    100% {
-        box-shadow:
-            inset  0  3px 0 0 var(--ink),
-            inset -3px  0  0 0 var(--ink),
-            inset  0 -3px 0 0 var(--ink),
-            inset  3px  0  0 0 var(--ink);
-    }
-}
-
-/* Reset on mouse leave */
 .exp-item:not(:hover)::after,
 .project-card:not(:hover)::after,
 .skill-block:not(:hover)::after,
@@ -1118,27 +1011,20 @@ footer {
     animation: borderCrawlOut 0.15s ease forwards;
 }
 
-@keyframes borderCrawlOut {
-    from {
-        box-shadow:
-            inset  0  3px 0 0 var(--ink),
-            inset -3px  0  0 0 var(--ink),
-            inset  0 -3px 0 0 var(--ink),
-            inset  3px  0  0 0 var(--ink);
-    }
-    to {
-        box-shadow:
-            inset  0  3px 0 0 transparent,
-            inset -3px  0  0 0 transparent,
-            inset  0 -3px 0 0 transparent,
-            inset  3px  0  0 0 transparent;
-    }
+@keyframes borderCrawl {
+    0%   { box-shadow: inset 0 3px 0 0 transparent, inset -3px 0 0 0 transparent, inset 0 -3px 0 0 transparent, inset 3px 0 0 0 transparent; }
+    25%  { box-shadow: inset 0 3px 0 0 var(--ink),  inset -3px 0 0 0 transparent, inset 0 -3px 0 0 transparent, inset 3px 0 0 0 transparent; }
+    50%  { box-shadow: inset 0 3px 0 0 var(--ink),  inset -3px 0 0 0 var(--ink),  inset 0 -3px 0 0 transparent, inset 3px 0 0 0 transparent; }
+    75%  { box-shadow: inset 0 3px 0 0 var(--ink),  inset -3px 0 0 0 var(--ink),  inset 0 -3px 0 0 var(--ink),  inset 3px 0 0 0 transparent; }
+    100% { box-shadow: inset 0 3px 0 0 var(--ink),  inset -3px 0 0 0 var(--ink),  inset 0 -3px 0 0 var(--ink),  inset 3px 0 0 0 var(--ink); }
 }
 
-/* ── HOVER: CARD TITLE GLITCH ────────────────────
-   Triggers on parent card hover, applies to h3
-   ─────────────────────────────────────────────── */
+@keyframes borderCrawlOut {
+    from { box-shadow: inset 0 3px 0 0 var(--ink), inset -3px 0 0 0 var(--ink), inset 0 -3px 0 0 var(--ink), inset 3px 0 0 0 var(--ink); }
+    to   { box-shadow: inset 0 3px 0 0 transparent, inset -3px 0 0 0 transparent, inset 0 -3px 0 0 transparent, inset 3px 0 0 0 transparent; }
+}
 
+/* ── CARD TITLE GLITCH ───────────────────────── */
 .exp-body h3,
 .project-body h3,
 .cert-body h3,
@@ -1147,19 +1033,14 @@ footer {
     display: inline-block;
 }
 
-.exp-body h3::before,
-.exp-body h3::after,
-.project-body h3::before,
-.project-body h3::after,
-.cert-body h3::before,
-.cert-body h3::after,
-.skill-block-head h3::before,
-.skill-block-head h3::after {
+.exp-body h3::before, .exp-body h3::after,
+.project-body h3::before, .project-body h3::after,
+.cert-body h3::before, .cert-body h3::after,
+.skill-block-head h3::before, .skill-block-head h3::after {
     content: attr(data-text);
     position: absolute;
     top: 0; left: 0;
-    width: 100%;
-    height: 100%;
+    width: 100%; height: 100%;
     opacity: 0;
     pointer-events: none;
     font-weight: inherit;
@@ -1169,25 +1050,20 @@ footer {
     overflow: hidden;
 }
 
-.exp-body h3::before,
-.project-body h3::before,
-.cert-body h3::before,
-.skill-block-head h3::before {
+.exp-body h3::before, .project-body h3::before,
+.cert-body h3::before, .skill-block-head h3::before {
     color: #1a6bff;
     clip-path: polygon(0 15%, 100% 15%, 100% 40%, 0 40%);
     transform: translateX(-2px);
 }
 
-.exp-body h3::after,
-.project-body h3::after,
-.cert-body h3::after,
-.skill-block-head h3::after {
+.exp-body h3::after, .project-body h3::after,
+.cert-body h3::after, .skill-block-head h3::after {
     color: #ff1a4b;
     clip-path: polygon(0 60%, 100% 60%, 100% 80%, 0 80%);
     transform: translateX(2px);
 }
 
-/* Trigger glitch when parent card is hovered */
 .exp-item:hover .exp-body h3::before,
 .exp-item:hover .exp-body h3::after,
 .project-card:hover .project-body h3::before,
@@ -1212,10 +1088,7 @@ footer {
     100% { opacity: 0; transform: translateX(0); }
 }
 
-/* ── HOVER: SECTION HEADING GLITCH ──────────────
-   Direct hover on h2 inside .section-head
-   ─────────────────────────────────────────────── */
-
+/* ── SECTION HEADING GLITCH ──────────────────── */
 .section-head h2 {
     position: relative;
     display: inline-block;
@@ -1227,8 +1100,7 @@ footer {
     content: attr(data-text);
     position: absolute;
     top: 0; left: 0;
-    width: 100%;
-    height: 100%;
+    width: 100%; height: 100%;
     opacity: 0;
     pointer-events: none;
     font-weight: inherit;
@@ -1250,15 +1122,8 @@ footer {
     transform: translateX(3px);
 }
 
-.section-head h2:hover::before,
-.section-head h2:hover::after {
-    animation: titleGlitch 0.5s steps(2) forwards;
-    opacity: 1;
-}
-
-/* Slightly bigger shift for larger text */
-.section-head h2:hover::before { animation: headingGlitch 0.55s steps(2) forwards; }
-.section-head h2:hover::after  { animation: headingGlitch 0.55s steps(2) forwards; }
+.section-head h2:hover::before { animation: headingGlitch 0.55s steps(2) forwards; opacity: 1; }
+.section-head h2:hover::after  { animation: headingGlitch 0.55s steps(2) forwards; opacity: 1; }
 
 @keyframes headingGlitch {
     0%   { opacity: 0;   transform: translateX(0); }
@@ -1272,11 +1137,7 @@ footer {
     100% { opacity: 0;   transform: translateX(0); }
 }
 
-/* ── HOVER: BUTTON GLITCH + BORDER CRAWL ─────────
-   Hero CTA buttons get both effects
-   ─────────────────────────────────────────────── */
-
-/* Border crawl on buttons */
+/* ── BUTTON GLITCH + BORDER CRAWL ────────────── */
 .btn::after {
     content: '';
     position: absolute;
@@ -1290,22 +1151,14 @@ footer {
         inset  3px  0  0 0 transparent;
 }
 
-.btn:hover::after {
-    animation: borderCrawl 0.7s ease forwards;
-}
+.btn:hover::after     { animation: borderCrawl 0.7s ease forwards; }
+.btn:not(:hover)::after { animation: borderCrawlOut 0.15s ease forwards; }
 
-.btn:not(:hover)::after {
-    animation: borderCrawlOut 0.15s ease forwards;
-}
-
-/* Glitch chromatic layers on button text */
 .btn::before {
     content: attr(data-text);
     position: absolute;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 100%;
+    top: 0; left: 0;
+    width: 100%; height: 100%;
     display: flex;
     align-items: center;
     justify-content: flex-start;
@@ -1348,13 +1201,7 @@ footer {
     100% { opacity: 0;   transform: translateX(0); }
 }
 
-/* ── CONTACT ITEMS: BORDER CRAWL + GLITCH ─────── */
-
-.contact-item {
-    position: relative;
-    isolation: isolate;
-}
-
+/* ── CONTACT BORDER CRAWL + GLITCH ──────────── */
 .contact-item::after {
     content: '';
     position: absolute;
@@ -1368,26 +1215,15 @@ footer {
         inset  3px  0  0 0 transparent;
 }
 
-.contact-item:hover::after {
-    animation: borderCrawl 0.7s ease forwards;
-}
-
-.contact-item:not(:hover)::after {
-    animation: borderCrawlOut 0.15s ease forwards;
-}
-
-.contact-val {
-    position: relative;
-    display: inline-block;
-}
+.contact-item:hover::after     { animation: borderCrawl 0.7s ease forwards; }
+.contact-item:not(:hover)::after { animation: borderCrawlOut 0.15s ease forwards; }
 
 .contact-val::before,
 .contact-val::after {
     content: attr(data-text);
     position: absolute;
     top: 0; left: 0;
-    width: 100%;
-    height: 100%;
+    width: 100%; height: 100%;
     opacity: 0;
     pointer-events: none;
     font-weight: inherit;
@@ -1415,19 +1251,15 @@ footer {
     opacity: 1;
 }
 
-/* ── NAV LINKS: GLITCH ON HOVER ─────────────── */
-
-.nav-link {
-    position: relative;
-}
+/* ── NAV LINK GLITCH ─────────────────────────── */
+.nav-link { position: relative; }
 
 .nav-link::before,
 .nav-link::after {
     content: attr(data-text);
     position: absolute;
     top: 0; left: 0;
-    width: 100%;
-    height: 100%;
+    width: 100%; height: 100%;
     opacity: 0;
     pointer-events: none;
     font-weight: inherit;
@@ -1454,6 +1286,17 @@ footer {
 .nav-link:hover::after {
     animation: titleGlitch 0.5s steps(2) forwards;
     opacity: 1;
+}
+
+/* ── DATA CORRUPTION CANVAS ──────────────────── */
+.corruption-canvas {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    pointer-events: none;
+    z-index: 10;
 }
 
 /* ── RESPONSIVE ──────────────────────────────── */
@@ -1525,94 +1368,5 @@ footer {
     .nav-inner { padding: 0 1.5rem; }
     .hero-content { padding: 3rem 1.5rem 2rem; }
 
-/* ── GRAIN z-index — must sit below signal-loss overlay ── */
-.grain { z-index: 100 !important; }
-}
-
-/* ── SECTION WIPE TRANSITION ─────────────────── */
-section:not(.hero) {
-    position: relative;
-}
-
-.wipe-overlay {
-    position: absolute;
-    inset: 0;
-    background: var(--ink);
-    z-index: 50;
-    transform: scaleX(0);
-    transform-origin: left;
-    pointer-events: none;
-}
-
-.wipe-overlay.wipe-in {
-    animation: wipeIn 0.45s cubic-bezier(0.77, 0, 0.18, 1) forwards;
-}
-
-.wipe-overlay.wipe-out {
-    animation: wipeOut 0.45s cubic-bezier(0.77, 0, 0.18, 1) forwards;
-}
-
-@keyframes wipeIn {
-    from { transform: scaleX(0); transform-origin: left; }
-    to   { transform: scaleX(1); transform-origin: left; }
-}
-
-@keyframes wipeOut {
-    from { transform: scaleX(1); transform-origin: right; }
-    to   { transform: scaleX(0); transform-origin: right; }
-}
-
-/* Hide section content until wipe reveals it */
-section:not(.hero) > *:not(.wipe-overlay) {
-    opacity: 0;
-    transition: opacity 0s;
-}
-
-section:not(.hero).wipe-revealed > *:not(.wipe-overlay) {
-    opacity: 1;
-    transition: opacity 0.01s;
-}
-
-/* Keep stagger working after reveal */
-section:not(.hero).wipe-revealed .stagger {
-    opacity: 0;
-    transform: translateY(28px);
-    transition: opacity 0.55s ease, transform 0.55s ease;
-}
-
-section:not(.hero).wipe-revealed .stagger.visible {
-    opacity: 1;
-    transform: translateY(0);
-}
-
-/* ── DATA CORRUPTION TRANSITION ──────────────── */
-.corruption-canvas {
-    position: absolute;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 100%;
-    pointer-events: none;
-    z-index: 10;
-}
-
-section:not(.hero) {
-    position: relative;
-    overflow: visible;
-}
-
-/* ── DATA CORRUPTION TRANSITION ──────────────── */
-.corruption-canvas {
-    position: absolute;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 100%;
-    pointer-events: none;
-    z-index: 10;
-}
-
-section:not(.hero) {
-    position: relative;
-    overflow: visible;
+    .grain { z-index: 100 !important; }
 }
