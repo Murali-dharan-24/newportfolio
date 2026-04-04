@@ -1528,3 +1528,59 @@ footer {
 /* ── GRAIN z-index — must sit below signal-loss overlay ── */
 .grain { z-index: 100 !important; }
 }
+
+/* ── SECTION WIPE TRANSITION ─────────────────── */
+section:not(.hero) {
+    position: relative;
+}
+
+.wipe-overlay {
+    position: absolute;
+    inset: 0;
+    background: var(--ink);
+    z-index: 50;
+    transform: scaleX(0);
+    transform-origin: left;
+    pointer-events: none;
+}
+
+.wipe-overlay.wipe-in {
+    animation: wipeIn 0.45s cubic-bezier(0.77, 0, 0.18, 1) forwards;
+}
+
+.wipe-overlay.wipe-out {
+    animation: wipeOut 0.45s cubic-bezier(0.77, 0, 0.18, 1) forwards;
+}
+
+@keyframes wipeIn {
+    from { transform: scaleX(0); transform-origin: left; }
+    to   { transform: scaleX(1); transform-origin: left; }
+}
+
+@keyframes wipeOut {
+    from { transform: scaleX(1); transform-origin: right; }
+    to   { transform: scaleX(0); transform-origin: right; }
+}
+
+/* Hide section content until wipe reveals it */
+section:not(.hero) > *:not(.wipe-overlay) {
+    opacity: 0;
+    transition: opacity 0s;
+}
+
+section:not(.hero).wipe-revealed > *:not(.wipe-overlay) {
+    opacity: 1;
+    transition: opacity 0.01s;
+}
+
+/* Keep stagger working after reveal */
+section:not(.hero).wipe-revealed .stagger {
+    opacity: 0;
+    transform: translateY(28px);
+    transition: opacity 0.55s ease, transform 0.55s ease;
+}
+
+section:not(.hero).wipe-revealed .stagger.visible {
+    opacity: 1;
+    transform: translateY(0);
+}
