@@ -1655,11 +1655,67 @@ footer {
     cursor: pointer;
     transition: transform 0.15s, box-shadow 0.15s;
     margin-top: 0.5rem;
+    position: relative;
+    isolation: isolate;
+    overflow: hidden;
 }
 
 .contact-send-btn:hover {
     transform: translate(-3px, -3px);
     box-shadow: var(--shadow);
+}
+
+/* Border crawl — same as .btn::after */
+.contact-send-btn::after {
+    content: '';
+    position: absolute;
+    inset: 0;
+    pointer-events: none;
+    z-index: 2;
+    box-shadow:
+        inset  0  3px 0 0 transparent,
+        inset -3px  0  0 0 transparent,
+        inset  0 -3px 0 0 transparent,
+        inset  3px  0  0 0 transparent;
+}
+
+.contact-send-btn:hover::after {
+    animation: borderCrawl 0.7s ease forwards;
+}
+
+.contact-send-btn:not(:hover)::after {
+    animation: borderCrawlOut 0.15s ease forwards;
+}
+
+/* Glitch chromatic layer — same as .btn-primary::before */
+.contact-send-btn::before {
+    content: 'SEND_MESSAGE →';
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: flex-start;
+    padding: 0 1.8rem;
+    font-family: var(--font);
+    font-weight: 700;
+    font-size: 0.8rem;
+    letter-spacing: 0.1em;
+    color: #4adfff;
+    clip-path: polygon(0 15%, 100% 15%, 100% 50%, 0 50%);
+    transform: translateX(-3px);
+    opacity: 0;
+    pointer-events: none;
+    white-space: nowrap;
+    z-index: 3;
+    box-sizing: border-box;
+}
+
+.contact-send-btn:hover::before {
+    animation: btnGlitch 0.5s steps(2) forwards;
+    opacity: 1;
 }
 
 @media (max-width: 768px) {
