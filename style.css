@@ -1730,3 +1730,12 @@ footer {
         grid-template-columns: 1fr;
     }
 }
+
+.contact-info-panel .contact-item {
+    border-right: none;
+    border-bottom: var(--border);
+}
+
+.contact-info-panel .contact-item:last-child {
+    border-bottom: none;
+}
