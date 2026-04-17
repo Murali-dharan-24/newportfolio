@@ -97,7 +97,7 @@ const obs = new IntersectionObserver(entries => {
     entries.forEach(e => { if (e.isIntersecting) e.target.classList.add('visible'); });
 }, { threshold: 0.1 });
 
-document.querySelectorAll('.exp-list,.projects-grid,.skills-grid,.cert-list,.contact-grid,.about-grid')
+document.querySelectorAll('.exp-list,.projects-grid,.skills-grid,.cert-list,.contact-two-panel,.about-grid')
     .forEach(c => c.querySelectorAll('.stagger').forEach((el, i) => {
         el.style.transitionDelay = `${i * 0.08}s`;
     }));
