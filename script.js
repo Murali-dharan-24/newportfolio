@@ -271,3 +271,14 @@ document.querySelectorAll('a[href^="#"]').forEach(link => {
         runTVShutdown(href);
     });
 });
+
+function handleContactSubmit() {
+    const name = document.getElementById('contact-name').value;
+    const email = document.getElementById('contact-email').value;
+    const message = document.getElementById('contact-message').value;
+    if (!name || !email || !message) {
+        alert('Please fill in all fields.');
+        return;
+    }
+    window.location.href = `mailto:muralidharan242005@gmail.com?subject=Message from ${name}&body=${message}%0A%0AFrom: ${email}`;
+}
