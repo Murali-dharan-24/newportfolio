@@ -272,13 +272,78 @@ document.querySelectorAll('a[href^="#"]').forEach(link => {
     });
 });
 
+emailjs.init('UEGyXulRkcAv_74-5'); // ← paste your public key here
+
 function handleContactSubmit() {
-    const name = document.getElementById('contact-name').value;
-    const email = document.getElementById('contact-email').value;
-    const message = document.getElementById('contact-message').value;
+    const name    = document.getElementById('contact-name').value.trim();
+    const email   = document.getElementById('contact-email').value.trim();
+    const message = document.getElementById('contact-message').value.trim();
+    const btn     = document.querySelector('.contact-send-btn');
+
     if (!name || !email || !message) {
         alert('Please fill in all fields.');
         return;
     }
-    window.location.href = `mailto:muralidharan242005@gmail.com?subject=Message from ${name}&body=${message}%0A%0AFrom: ${email}`;
+
+    btn.textContent = 'SENDING...';
+    btn.disabled = true;
+
+    emailjs.send('service_7ejd0d9', 'template_v3pyf0l', {
+        from_name:  name,
+        from_email: email,
+        message:    message,
+    })
+    .then(() => {
+    btn.textContent = 'MESSAGE SENT ✓';
+    btn.style.background = 'transparent';
+    btn.style.color = 'var(--ink)';
+    btn.style.boxShadow = 'none';
+    btn.style.transform = 'none';
+
+    const successMsg = document.createElement('p');
+    successMsg.textContent = '✓ Your message has been received. I\'ll get back to you soon.';
+    successMsg.style.cssText = `
+        font-size: 0.78rem;
+        font-weight: 600;
+        letter-spacing: 0.06em;
+        color: var(--ink);
+        border: var(--border-thin);
+        border-left: 3px solid var(--ink);
+        padding: 0.7rem 1rem;
+        margin-top: 0.8rem;
+        opacity: 0;
+        transform: translateY(6px);
+        transition: opacity 0.4s ease, transform 0.4s ease;
+    `;
+    btn.parentNode.insertBefore(successMsg, btn.nextSibling);
+
+    requestAnimationFrame(() => {
+        requestAnimationFrame(() => {
+            successMsg.style.opacity = '1';
+            successMsg.style.transform = 'translateY(0)';
+        });
+    });
+
+    document.getElementById('contact-name').value    = '';
+    document.getElementById('contact-email').value   = '';
+    document.getElementById('contact-message').value = '';
+
+    setTimeout(() => {
+        successMsg.style.opacity = '0';
+        successMsg.style.transform = 'translateY(6px)';
+        setTimeout(() => successMsg.remove(), 400);
+        btn.textContent = 'SEND_MESSAGE →';
+        btn.style.background = '';
+        btn.style.color = '';
+        btn.style.boxShadow = '';
+        btn.disabled = false;
+    }, 4000);
+})
+    .catch(() => {
+        btn.textContent = 'FAILED — RETRY';
+        btn.disabled = false;
+        setTimeout(() => {
+            btn.textContent = 'SEND_MESSAGE →';
+        }, 3000);
+    });
 }
